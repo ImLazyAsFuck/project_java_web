@@ -1,5 +1,6 @@
 package com.jarproject.repository.student;
 
+import com.jarproject.config.PasswordUtil;
 import com.jarproject.entity.Student;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +39,7 @@ public class StudentRepositoryImpl implements StudentRepository{
     @Override
     public void save(Student student){
         try {
+            student.setPassword(PasswordUtil.hashPassword(student.getPassword()));
             em.persist(student);
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,13 +116,12 @@ public class StudentRepositoryImpl implements StudentRepository{
     }
 
     @Override
-    public Student login(String username, String password) {
+    public Student login(String email, String password) {
         try {
             TypedQuery<Student> query = em.createQuery(
-                    "SELECT s FROM Student s WHERE s.username = :username AND s.password = :password", Student.class
+                    "SELECT s FROM Student s WHERE s.email = :email", Student.class
             );
-            query.setParameter("username", username);
-            query.setParameter("password", password);
+            query.setParameter("email", email);
             query.setMaxResults(1);
             return query.getSingleResult();
         } catch (Exception e) {

@@ -60,7 +60,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public Student login(String username, String password){
-        return studentRepository.login(username, password);
+    public Student login(String email, String password){
+        return studentRepository.login(email, password);
     }
 }
