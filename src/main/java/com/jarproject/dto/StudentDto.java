@@ -46,4 +46,5 @@ public class StudentDto{
 
     private LocalDate createAt;
     private boolean role;
+    private boolean status;
 }

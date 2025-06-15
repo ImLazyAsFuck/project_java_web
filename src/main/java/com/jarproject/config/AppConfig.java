@@ -75,9 +75,9 @@ public class AppConfig implements WebMvcConfigurer{
     @Bean
     public Cloudinary cloudinary(){
         Map<String, String> config = ObjectUtils.asMap(
-                "cloud_name", cloudName,
-                "api_key", apiKey,
-                "api_secret", apiSecret
+                "cloud_name", "dyvpntnlo",
+                "api_key", "454613881778997",
+                "api_secret", "tqE77yZfduiHan7D9XvPiSbSawI"
         );
         return new Cloudinary(config);
     }

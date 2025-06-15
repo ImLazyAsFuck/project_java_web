@@ -18,6 +18,11 @@ public class CourseServiceImpl implements  CourseService{
     }
 
     @Override
+    public List<Course> findAllCourse(int page, int size){
+        return courseRepository.findAllCourse(page, size);
+    }
+
+    @Override
     public Course findById(String id){
         return courseRepository.findById(id);
     }
@@ -45,6 +50,11 @@ public class CourseServiceImpl implements  CourseService{
     @Override
     public List<Course> searchByName(String name, int page, int size, String orderBy, String orderType, boolean status){
         return courseRepository.searchByName(name,page,size,orderBy,orderType, status);
+    }
+
+    @Override
+    public List<Course> searchByCourseName(String name, int page, int size){
+        return courseRepository.searchByCourseName(name,page,size);
     }
 
 

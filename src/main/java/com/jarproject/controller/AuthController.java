@@ -25,14 +25,18 @@ public class AuthController{
 
     @GetMapping("/")
     public String index(Model model){
-        Student loginStudent = (Student) httpSession.getAttribute("loginStudent");
-        if(loginStudent == null){
+        Integer curUser = (Integer) httpSession.getAttribute("curUser");
+        if(curUser == null){
             return "redirect:/login";
         }
-        if(loginStudent.isRole()){
-            return "redirect:/admin/dashboard";
+        Student sessionStudent = studentService.findById(curUser);
+        if(sessionStudent == null || !sessionStudent.isStatus()){
+            return "redirect:/login";
         }
-        return "redirect:/home";
+        if(sessionStudent.isRole()){
+            return "redirect:/admin";
+        }
+        return "redirect:/course/list";
     }
 
     @GetMapping("login")
@@ -57,11 +61,11 @@ public class AuthController{
 
         if(loginStudent != null && PasswordUtil.verifyPassword(loginDto.getPassword(), loginStudent.getPassword())) {
             if(loginStudent.isRole()) {
-                httpSession.setAttribute("loginStudent", loginStudent);
+                httpSession.setAttribute("curUser", loginStudent.getId());
                 return "redirect:/admin";
             } else {
-                httpSession.setAttribute("loginStudent", loginStudent);
-                return "redirect:/home";
+                httpSession.setAttribute("curUser", loginStudent.getId());
+                return "redirect:/course/list";
             }
         } else {
             model.addAttribute("loginDto", loginDto);
@@ -103,6 +107,7 @@ public class AuthController{
 
     @GetMapping("logout")
     public String logout(){
+        httpSession.removeAttribute("curUser");
         return "redirect:/login";
     }
 }

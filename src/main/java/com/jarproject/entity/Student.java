@@ -46,4 +46,7 @@ public class Student{
 
     @Column(name = "role", nullable = false)
     private boolean role = false;
+
+    @Column(name = "status", nullable = false)
+    private boolean status = true;
 }

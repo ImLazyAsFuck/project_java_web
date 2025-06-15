@@ -9,11 +9,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 w-full h-screen flex flex-col">
+<div th:if="${isDelete}" th:replace="admin/course-management/delete-course :: delete-course"></div>
 <div th:if="${isShowForm}" th:replace="admin/course-management/course-form :: courseForm"></div>
 
 <header th:replace="fragment/admin-header :: header"></header>
 
-<div class="flex flex-1 w-full">
+<main class="flex flex-1 w-full">
     <div class="w-[300px] shrink-0">
         <aside th:replace="fragment/admin-sidebar :: sidebar"></aside>
     </div>
@@ -23,25 +24,47 @@
             <h2 class="text-2xl font-bold">Course Management</h2>
             <button onclick="window.location.href='/admin/course/showForm'" class="bg-indigo-500 text-white px-4 py-2 rounded">Add New Course</button>
         </div>
-        <form th:action="@{/admin/course/list}" method="get" class="w-full flex justify-end px-10 gap-3 outline-none items-center">
-            <select name="status" class="px-2 py-1 rounded-md border border-gray-300">
-                <option value="">Filter by status</option>
-                <option value="true" th:selected="${status} == true">True</option>
-                <option value="false" th:selected="${status} == false">False</option>
-            </select>
+        <div class="w-full flex justify-end px-10 gap-3 outline-none items-center">
+            <!-- Form Filter -->
+            <form th:action="@{/admin/course/list}" method="get" class="inline-block">
+                <select name="status" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
+                    <option value="">Filter by status</option>
+                    <option value="true" th:selected="${status} == true">True</option>
+                    <option value="false" th:selected="${status} == false">False</option>
+                </select>
+                <input type="hidden" name="orderBy" th:value="${orderBy}">
+                <input type="hidden" name="orderType" th:value="${orderType}">
+                <input type="hidden" name="kw" th:value="${kw}">
+            </form>
 
-            <select name="orderBy" class="px-2 py-1 rounded-md border border-gray-300">
-                <option value="id" th:selected="${orderBy} == 'id'">Id</option>
-                <option value="name" th:selected="${orderBy} == 'name'">Name</option>
-            </select>
+            <!-- Form Sort -->
+            <form th:action="@{/admin/course/list}" method="get" class="inline-block">
+                <select name="orderBy" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
+                    <option value="id" th:selected="${orderBy} == 'id'">Id</option>
+                    <option value="name" th:selected="${orderBy} == 'name'">Name</option>
+                </select>
 
-            <select name="orderType" class="px-2 py-1 rounded-md border border-gray-300">
-                <option value="asc" th:selected="${orderType} == 'asc'">Asc</option>
-                <option value="desc" th:selected="${orderType} == 'desc'">Desc</option>
-            </select>
-            <input name="kw" class="px-2 py-1 rounded-md border border-gray-300" type="text" placeholder="Search by name">
-            <input type="submit" class="px-4 py-2 rounded-md border bg-blue-500 text-white" value="Search">
-        </form>
+                <select name="orderType" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
+                    <option value="asc" th:selected="${orderType} == 'asc'">Asc</option>
+                    <option value="desc" th:selected="${orderType} == 'desc'">Desc</option>
+                </select>
+
+                <input type="hidden" name="status" th:value="${status}">
+                <input type="hidden" name="kw" th:value="${kw}">
+            </form>
+
+            <!-- Form Search -->
+            <form th:action="@{/admin/course/list}" method="get" class="inline-block">
+                <input name="kw" class="px-2 py-1 rounded-md border border-gray-300" type="text"
+                       placeholder="Search by name" th:value="${kw}">
+                <input type="submit" class="px-4 py-2 rounded-md border bg-blue-500 text-white" value="Search">
+
+                <input type="hidden" name="status" th:value="${status}">
+                <input type="hidden" name="orderBy" th:value="${orderBy}">
+                <input type="hidden" name="orderType" th:value="${orderType}">
+            </form>
+        </div>
+
         <table class="w-[95%] mx-auto mt-5 bg-white shadow rounded-lg">
             <thead class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
             <tr>
@@ -68,16 +91,22 @@
                     <a th:href="@{/admin/course/showForm(id=${c.id})}" class="text-yellow-500 hover:text-yellow-700">
                         <button type="button">✏️</button>
                     </a>
-                    <a th:href="@{'/admin/course/delete/' + ${c.id}}"
-                       class="text-red-500 hover:text-red-700"
-                       onclick="return confirm('Bạn có chắc chắn muốn xóa khóa học này không?')">
+                    <a th:if="${c.status == true}"
+                       th:href="@{'/admin/course/delete/' + ${c.id}}"
+                       class="text-red-500 hover:text-red-700">
                         🗑️
+                    </a>
+
+                    <a th:if="${c.status == false}"
+                       th:href="@{'/admin/course/delete/' + ${c.id}}"
+                       class="text-green-500 hover:text-green-700">
+                        🔓
                     </a>
                 </td>
             </tr>
             </tbody>
         </table>
-        <div th:if="${totalPages > 1}" class="w-full flex justify-center mt-6">
+        <div th:if="${totalPages > 1}" class="w-full fixed bottom-[50px] flex justify-center mt-6">
             <ul class="inline-flex items-center space-x-1 text-sm">
                 <li th:if="${currentPage > 1}">
                     <a th:href="@{/admin/course/list(page=${currentPage - 1}, orderBy=${orderBy}, orderType=${orderType}, status=${status}, kw=${kw})}"
@@ -97,6 +126,6 @@
         </div>
 
     </div>
-</div>
+</main>
 </body>
 </html>

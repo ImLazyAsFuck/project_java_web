@@ -64,7 +64,7 @@ public class CourseRepositoryImpl implements CourseRepository {
         try{
             Course course = em.find(Course.class, id);
             if(course != null){
-                course.setStatus(false);
+                course.setStatus(!course.isStatus());
                 em.merge(course);
             }
         }catch(Exception e){
@@ -103,6 +103,21 @@ public class CourseRepositoryImpl implements CourseRepository {
         }
     }
 
+    @Override
+    public List<Course> searchByCourseName(String name, int page, int size){
+        try{
+            TypedQuery<Course> query = em.createQuery(
+                    "SELECT c FROM Course c where LOWER(c.name) LIKE :name and c.status=true", Course.class
+            );
+            query.setParameter("name", "%" + name.toLowerCase() + "%");
+            query.setFirstResult((page - 1) * size);
+            query.setMaxResults(size);
+            return query.getResultList();
+        }catch(Exception e){
+            return new ArrayList<>();
+        }
+
+    }
 
 
     @Override
@@ -122,6 +137,18 @@ public class CourseRepositoryImpl implements CourseRepository {
 
             return query.getResultList();
         } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<Course> findAllCourse(int page, int size){
+        try{
+            TypedQuery<Course> query = em.createQuery("SELECT c FROM Course c where status=true", Course.class);
+            query.setFirstResult((page - 1) * size);
+            query.setMaxResults(size);
+            return query.getResultList();
+        }catch(Exception e){
             return new ArrayList<>();
         }
     }

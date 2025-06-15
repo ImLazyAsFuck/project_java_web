@@ -11,11 +11,23 @@
 <body>
 <aside th:fragment="sidebar" class="h-full p-10 w-full">
     <div class="w-full flex flex-col gap-4 justify-center">
-        <a th:href="@{/admin/dashboard}" class="py-2 px-4 rounded hover:bg-gray-200">🏠 Dashboard</a>
-        <a th:href="@{/admin/course/list}" class="py-2 px-4 rounded hover:bg-gray-200">📖 Courses</a>
-        <a th:href="@{/admin/student/list}" class="py-2 px-4 rounded hover:bg-gray-200">👥 Students</a>
-        <a th:href="@{/admin/enrollment/list}" class="py-2 px-4 rounded hover:bg-gray-200">👩‍🎓 Enrollment</a>
+        <a th:classappend="${#request.requestURI.contains('/admin/dashboard') ? 'text-blue-500' : ''}"
+           th:href="@{/admin/dashboard}"
+           class="py-2 px-4 rounded hover:text-blue-500">🏠 Dashboard</a>
+
+        <a th:classappend="${#request.requestURI.contains('/admin/course') ? 'text-blue-500' : ''}"
+           th:href="@{/admin/course/list}"
+           class="py-2 px-4 rounded hover:text-blue-500">📖 Courses</a>
+
+        <a th:classappend="${#request.requestURI.contains('/admin/student') ? 'text-blue-500' : ''}"
+           th:href="@{/admin/student/list}"
+           class="py-2 px-4 rounded hover:text-blue-500">👥 Students</a>
+
+        <a th:classappend="${#request.requestURI.contains('/admin/enrollment') ? 'text-blue-500' : ''}"
+           th:href="@{/admin/enrollment/list}"
+           class="py-2 px-4 rounded hover:text-blue-500">👩‍🎓 Enrollment</a>
     </div>
 </aside>
+
 </body>
 </html>

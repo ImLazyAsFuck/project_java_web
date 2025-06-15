@@ -15,4 +15,5 @@ public interface StudentRepository{
     boolean isEmailExist(String email);
     boolean isPhoneExist(String phone);
     Student login(String email, String password);
+
 }
