@@ -1,4 +1,4 @@
-package com.jarproject.service.Course;
+package com.jarproject.service.course;
 
 import com.jarproject.entity.Course;
 import com.jarproject.repository.course.CourseRepository;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CourseServiceImpl implements  CourseService{
+public class CourseServiceImpl implements CourseService{
     @Autowired
     private CourseRepository courseRepository;
 

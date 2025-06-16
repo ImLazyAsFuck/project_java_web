@@ -32,21 +32,17 @@
                     <option value="true" th:selected="${status} == true">True</option>
                     <option value="false" th:selected="${status} == false">False</option>
                 </select>
-                <input type="hidden" name="orderBy" th:value="${orderBy}">
-                <input type="hidden" name="orderType" th:value="${orderType}">
+                <input type="hidden" name="sort" th:value="${sort}">
                 <input type="hidden" name="kw" th:value="${kw}">
             </form>
 
-            <!-- Form Sort -->
+            <!-- Form Sort (Combined orderBy and orderType) -->
             <form th:action="@{/admin/course/list}" method="get" class="inline-block">
-                <select name="orderBy" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
-                    <option value="id" th:selected="${orderBy} == 'id'">Id</option>
-                    <option value="name" th:selected="${orderBy} == 'name'">Name</option>
-                </select>
-
-                <select name="orderType" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
-                    <option value="asc" th:selected="${orderType} == 'asc'">Asc</option>
-                    <option value="desc" th:selected="${orderType} == 'desc'">Desc</option>
+                <select name="sort" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
+                    <option value="id_asc" th:selected="${sort} == 'id_asc'">Id A-Z</option>
+                    <option value="id_desc" th:selected="${sort} == 'id_desc'">Id Z-A</option>
+                    <option value="name_asc" th:selected="${sort} == 'name_asc'">Name A-Z</option>
+                    <option value="name_desc" th:selected="${sort} == 'name_desc'">Name Z-A</option>
                 </select>
 
                 <input type="hidden" name="status" th:value="${status}">
@@ -60,10 +56,10 @@
                 <input type="submit" class="px-4 py-2 rounded-md border bg-blue-500 text-white" value="Search">
 
                 <input type="hidden" name="status" th:value="${status}">
-                <input type="hidden" name="orderBy" th:value="${orderBy}">
-                <input type="hidden" name="orderType" th:value="${orderType}">
+                <input type="hidden" name="sort" th:value="${sort}">
             </form>
         </div>
+
 
         <table class="w-[95%] mx-auto mt-5 bg-white shadow rounded-lg">
             <thead class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
@@ -108,22 +104,34 @@
         </table>
         <div th:if="${totalPages > 1}" class="w-full fixed bottom-[50px] flex justify-center mt-6">
             <ul class="inline-flex items-center space-x-1 text-sm">
-                <li th:if="${currentPage > 1}">
-                    <a th:href="@{/admin/course/list(page=${currentPage - 1}, orderBy=${orderBy}, orderType=${orderType}, status=${status}, kw=${kw})}"
-                       class="px-3 py-2 bg-white border rounded hover:bg-gray-100">&laquo;</a>
+                <!-- Previous button -->
+                <li>
+                    <a th:href="@{/admin/course/list(page=${currentPage - 1}, sort=${sort}, status=${status}, kw=${kw})}"
+                       th:classappend="${currentPage == 1} ? 'pointer-events-none text-gray-300 border-gray-300' : 'hover:bg-gray-100 text-gray-700 border-gray-300'"
+                       class="px-3 py-2 bg-white border rounded">
+                        &laquo;
+                    </a>
                 </li>
-                <li th:each="i : ${#numbers.sequence(1, totalPages)}"
-                    th:classappend="${i == currentPage} ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'"
-                    class="px-3 py-2 border rounded hover:bg-gray-100">
-                    <a th:href="@{/admin/course/list(page=${i}, orderBy=${orderBy}, orderType=${orderType}, status=${status}, kw=${kw})}"
+
+                <!-- Page numbers -->
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a th:href="@{/admin/course/list(page=${i}, sort=${sort}, status=${status}, kw=${kw})}"
+                       th:classappend="${i == currentPage} ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 hover:bg-gray-100 border-gray-300'"
+                       class="px-3 py-2 border rounded"
                        th:text="${i}">1</a>
                 </li>
-                <li th:if="${currentPage < totalPages}">
-                    <a th:href="@{/admin/course/list(page=${currentPage + 1}, orderBy=${orderBy}, orderType=${orderType}, status=${status}, kw=${kw})}"
-                       class="px-3 py-2 bg-white border rounded hover:bg-gray-100">&raquo;</a>
+
+                <!-- Next button -->
+                <li>
+                    <a th:href="@{/admin/course/list(page=${currentPage + 1}, sort=${sort}, status=${status}, kw=${kw})}"
+                       th:classappend="${currentPage == totalPages} ? 'pointer-events-none text-gray-300 border-gray-300' : 'hover:bg-gray-100 text-gray-700 border-gray-300'"
+                       class="px-3 py-2 bg-white border rounded">
+                        &raquo;
+                    </a>
                 </li>
             </ul>
         </div>
+
 
     </div>
 </main>

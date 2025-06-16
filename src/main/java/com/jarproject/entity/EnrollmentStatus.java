@@ -1,5 +1,5 @@
 package com.jarproject.entity;
 
 public enum EnrollmentStatus{
-    WAITING, DENIED, CANCEL, CONFIRM
+    WAITING, CANCELED, DENIED, CONFIRMED, COMPLETED
 }

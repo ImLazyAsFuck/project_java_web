@@ -36,4 +36,24 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public Enrollment getEnrollmentByIdAndStudentId(String courseId, Integer studentId){
         return enrollmentRepository.getEnrollmentByIdAndStudentId(courseId, studentId);
     }
+
+    @Override
+    public List<Enrollment> getEnrollmentsByStudentId(Integer studentId, int page, int size, String orderBy, String orderType){
+        return enrollmentRepository.getEnrollmentsByStudentId(studentId, page, size, orderBy, orderType);
+    }
+
+    @Override
+    public long count(Integer studentId){
+        return enrollmentRepository.count(studentId);
+    }
+
+    @Override
+    public List<Enrollment> searchByCourseName(String name, Integer studentId, int page, int size, String orderBy, String orderType){
+        return enrollmentRepository.searchByCourseName(name, studentId, page, size, orderBy, orderType);
+    }
+
+    @Override
+    public long countByCourseName(String name, Integer studentId){
+        return enrollmentRepository.countByCourseName(name, studentId);
+    }
 }

@@ -1,4 +1,4 @@
-package com.jarproject.service.Course;
+package com.jarproject.service.course;
 
 import com.jarproject.entity.Course;
 

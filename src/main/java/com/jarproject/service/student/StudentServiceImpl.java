@@ -63,4 +63,24 @@ public class StudentServiceImpl implements StudentService{
     public Student login(String email, String password){
         return studentRepository.login(email, password);
     }
+
+    @Override
+    public List<Student> searchByNameAndEmail(String kw, int page, int size, String orderBy, String orderType){
+        return studentRepository.searchByNameAndEmail(kw, page, size, orderBy, orderType);
+    }
+
+    @Override
+    public List<Student> findAll(int page, int size, String orderBy, String orderType){
+        return studentRepository.findAll(page, size, orderBy, orderType);
+    }
+
+    @Override
+    public long count(){
+        return studentRepository.count();
+    }
+
+    @Override
+    public long countByNameAndEmail(String name){
+        return studentRepository.countByNameAndEmail(name);
+    }
 }

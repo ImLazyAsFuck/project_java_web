@@ -4,7 +4,7 @@
     import com.jarproject.entity.Course;
     import com.jarproject.entity.Student;
     import com.jarproject.service.CloudinaryService;
-    import com.jarproject.service.Course.CourseService;
+    import com.jarproject.service.course.CourseService;
     import com.jarproject.service.student.StudentService;
     import org.modelmapper.ModelMapper;
     import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@
     import javax.validation.Valid;
     import java.io.IOException;
     import java.util.List;
-    import java.util.Optional;
 
     @Controller
     @RequestMapping("admin/course")
@@ -34,39 +33,58 @@
         @Autowired
         private StudentService studentService;
 
+        @GetMapping
+        public String adminCourse(){
+            return "redirect:/admin/course/list";
+        }
+
         @GetMapping("list")
         public String list(Model model,
                            @RequestParam(defaultValue = "1") int page,
-                           @RequestParam(required = false) String orderBy,
-                           @RequestParam(defaultValue = "asc") String orderType,
+                           @RequestParam(defaultValue = "id_asc") String sort,
                            @RequestParam(defaultValue = "true") boolean status,
                            @RequestParam(required = false) String kw) {
+
             Integer curUser = (Integer) session.getAttribute("curUser");
             if(curUser == null){
                 return "redirect:/login";
             }
+
             Student sessionStudent = studentService.findById(curUser);
             if(sessionStudent == null || !sessionStudent.isStatus() || !sessionStudent.isRole()){
                 return "redirect:/login";
             }
-            getData(model, page, orderBy, orderType, status, kw);
+
+            getData(model, page, sort, status, kw);
             model.addAttribute("isShowForm", false);
             model.addAttribute("isEdit", false);
             model.addAttribute("isDelete", false);
+
             return "admin/course-management/course-list";
         }
 
-
-
-        private void getData(Model model, int page, String orderBy, String orderType, boolean status, String kw){
+        private void getData(Model model, int page, String sort, boolean status, String kw) {
             int size = 5;
 
-            if (orderBy != null && !orderBy.equals("id") && !orderBy.equals("name")) {
-                orderBy = null;
-            }
+            String orderBy = "id";
+            String orderType = "asc";
 
-            if (!orderType.equalsIgnoreCase("asc") && !orderType.equalsIgnoreCase("desc")) {
-                orderType = "asc";
+            if (sort != null && !sort.trim().isEmpty()) {
+                String[] sortParts = sort.split("_");
+                if (sortParts.length == 2) {
+                    String field = sortParts[0];
+                    String direction = sortParts[1];
+
+                    // Validate field
+                    if ("id".equals(field) || "name".equals(field)) {
+                        orderBy = field;
+                    }
+
+                    // Validate direction
+                    if ("asc".equals(direction) || "desc".equals(direction)) {
+                        orderType = direction;
+                    }
+                }
             }
 
             List<Course> courses;
@@ -86,12 +104,12 @@
             model.addAttribute("courses", courses);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", totalPages);
-            model.addAttribute("orderBy", orderBy);
-            model.addAttribute("orderType", orderType);
+            model.addAttribute("sort", sort);
             model.addAttribute("kw", kw);
             model.addAttribute("status", status);
-
         }
+
+
 
         @GetMapping("showForm")
         public String showFormAdd(@RequestParam(required = false) String id, Model model){
@@ -122,7 +140,7 @@
 
             model.addAttribute("course", courseDto);
             model.addAttribute("isShowForm", true);
-            getData(model, 1, null, "asc", true, null);
+            getData(model, 1, "id_asc", true, null);
             return "admin/course-management/course-list";
         }
 
@@ -144,7 +162,7 @@
                 model.addAttribute("course", courseDto);
                 model.addAttribute("isShowForm", true);
                 model.addAttribute("isEdit", false);
-                getData(model, 1, null, "asc", true, null);
+                getData(model, 1, "id_asc", true, null);
                 return "admin/course-management/course-list";
             }
 
@@ -154,7 +172,7 @@
                 model.addAttribute("course", courseDto);
                 model.addAttribute("isShowForm", true);
                 model.addAttribute("isEdit", false);
-                getData(model, 1, null, "asc", true, null);
+                getData(model, 1, "id_asc", true, null);
                 return "admin/course-management/course-list";
             }
 
@@ -167,7 +185,7 @@
                     model.addAttribute("course", courseDto);
                     model.addAttribute("isShowForm", true);
                     model.addAttribute("isEdit", false);
-                    getData(model, 1, null, "asc", true, null);
+                    getData(model, 1, "id_asc", true, null);
                     return "admin/course-management/course-list";
                 }
             }else{
@@ -175,7 +193,7 @@
                 model.addAttribute("course", courseDto);
                 model.addAttribute("isShowForm", true);
                 model.addAttribute("isEdit", false);
-                getData(model, 1, null, "asc", true, null);
+                getData(model, 1, "id_asc", true, null);
                 return "admin/course-management/course-list";
             }
 
@@ -204,8 +222,8 @@
             if (bindingResult.hasErrors()) {
                 model.addAttribute("course", courseDto);
                 model.addAttribute("isShowForm", true);
-                model.addAttribute("isEdit", true); // Luôn true cho update
-                getData(model, 1, null, "asc", true, null);
+                model.addAttribute("isEdit", true);
+                getData(model, 1,  "id_asc", true, null);
                 return "admin/course-management/course-list";
             }
 
@@ -215,7 +233,7 @@
                 model.addAttribute("course", courseDto);
                 model.addAttribute("isShowForm", true);
                 model.addAttribute("isEdit", true);
-                getData(model, 1, null, "asc", true, null);
+                getData(model, 1,  "id_asc", true, null);
                 return "admin/course-management/course-list";
             }
 
@@ -228,7 +246,7 @@
                     model.addAttribute("course", courseDto);
                     model.addAttribute("isShowForm", true);
                     model.addAttribute("isEdit", true);
-                    getData(model, 1, null, "asc", true, null);
+                    getData(model, 1,  "id_asc", true, null);
                     return "admin/course-management/course-list";
                 }
             }
@@ -271,7 +289,7 @@
             model.addAttribute("course", courseDto);
             model.addAttribute("status", course.isStatus());
             model.addAttribute("isDelete", true);
-            getData(model, 1, null, "asc", true, null);
+            getData(model, 1,  "id_asc", true, null);
             return "admin/course-management/course-list";
         }
 

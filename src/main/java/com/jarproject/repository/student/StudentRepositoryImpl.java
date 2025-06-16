@@ -129,4 +129,61 @@ public class StudentRepositoryImpl implements StudentRepository{
         }
     }
 
+    @Override
+    public List<Student> searchByNameAndEmail(String kw, int page, int size, String orderBy, String orderType) {
+        try {
+            String jpql = "SELECT s FROM Student s WHERE s.role = false AND " +
+                    "(LOWER(s.name) LIKE LOWER(:kw) OR LOWER(s.email) LIKE LOWER(:kw)) " +
+                    "ORDER BY s." + orderBy + " " + orderType;
+
+            TypedQuery<Student> query = em.createQuery(jpql, Student.class);
+            query.setParameter("kw", "%" + kw + "%");
+            query.setFirstResult((page - 1) * size);
+            query.setMaxResults(size);
+
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<Student> findAll(int page, int size, String orderBy, String orderType){
+        try{
+            TypedQuery<Student> query = em.createQuery("SELECT s FROM Student s where s.role = false", Student.class);
+            query.setFirstResult((page - 1) * size);
+            query.setMaxResults(size);
+            return query.getResultList();
+        }catch(Exception e){
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public long count(){
+        try{
+            TypedQuery<Long> query = em.createQuery("select count(s) from Student s where s.role = false", Long.class);
+            return query.getSingleResult();
+        }catch(Exception e){
+            return 0;
+        }
+    }
+
+    @Override
+    public long countByNameAndEmail(String kw) {
+        try {
+            String jpql = "SELECT COUNT(s) FROM Student s WHERE s.role = false AND " +
+                    "(LOWER(s.name) LIKE LOWER(:kw) OR LOWER(s.email) LIKE LOWER(:kw))";
+
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            query.setParameter("kw", "%" + kw + "%");
+
+            return query.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 }

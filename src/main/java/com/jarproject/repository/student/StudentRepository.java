@@ -16,4 +16,8 @@ public interface StudentRepository{
     boolean isPhoneExist(String phone);
     Student login(String email, String password);
 
+    List<Student> searchByNameAndEmail(String kw, int page, int size, String orderBy, String orderType);
+    List<Student> findAll(int page, int size, String orderBy, String orderType);
+    long count();
+    long countByNameAndEmail(String name);
 }

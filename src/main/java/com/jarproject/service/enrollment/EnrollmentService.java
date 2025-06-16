@@ -10,4 +10,9 @@ public interface EnrollmentService{
     void updateEnrollment(Enrollment e);
     List<Enrollment> getEnrollmentsByStudentId(Integer studentId);
     Enrollment getEnrollmentByIdAndStudentId(String courseId, Integer studentId);
+
+    List<Enrollment> getEnrollmentsByStudentId(Integer studentId, int page, int size, String orderBy, String orderType);
+    long count(Integer studentId);
+    List<Enrollment> searchByCourseName(String name, Integer studentId, int page, int size, String orderBy, String orderType);
+    long countByCourseName(String name, Integer studentId);
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "enrollment")
@@ -33,4 +34,23 @@ public class Enrollment{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnrollmentStatus status = EnrollmentStatus.WAITING;
+
+    public String getFormattedRegisteredAt() {
+        return registeredAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
+
+    public String getStatusColorClass() {
+        switch (this.status) {
+            case WAITING:
+                return "text-yellow-500";
+            case CONFIRMED:
+                return "text-green-500";
+            case DENIED:
+            case CANCELED:
+                return "text-red-500";
+            default:
+                return "text-red-500";
+        }
+    }
+
 }

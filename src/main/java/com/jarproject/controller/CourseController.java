@@ -4,7 +4,7 @@ import com.jarproject.entity.Course;
 import com.jarproject.entity.Enrollment;
 import com.jarproject.entity.EnrollmentStatus;
 import com.jarproject.entity.Student;
-import com.jarproject.service.Course.CourseService;
+import com.jarproject.service.course.CourseService;
 import com.jarproject.service.enrollment.EnrollmentService;
 import com.jarproject.service.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -41,12 +40,13 @@ public class CourseController{
             Model model
     ){
         Integer curUser = (Integer)session.getAttribute("curUser");
-        if(curUser == null){
-            return "redirect:/login";
-        }
-        Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
-            return "redirect:/login";
+        Student sessionStudent = null;
+
+        if(curUser != null){
+            sessionStudent = studentService.findById(curUser);
+            if(sessionStudent != null && !sessionStudent.isStatus()){
+                sessionStudent = null;
+            }
         }
 
         getData(page, name, model, sessionStudent);
@@ -54,13 +54,16 @@ public class CourseController{
         return "main-page/course-list";
     }
 
+
     private void getData(int page, String name, Model model, Student sessionStudent){
         int size = 5;
         List<Course> courses;
         long totalItems;
         long totalPages;
 
-        List<Enrollment> enrollments = enrollmentService.getEnrollmentsByStudentId(sessionStudent.getId());
+        List<Enrollment> enrollments = sessionStudent != null
+                ? enrollmentService.getEnrollmentsByStudentId(sessionStudent.getId())
+                : new ArrayList<>();
 
         Map<String, String> enrollmentStatusMap = enrollments.stream()
                 .collect(Collectors.toMap(
@@ -115,7 +118,7 @@ public class CourseController{
         Enrollment enrollment = enrollmentService.getEnrollmentByIdAndStudentId(course.getId(), sessionStudent.getId());
         if(enrollment != null){
             switch(enrollment.getStatus()){
-                case CONFIRM:
+                case CONFIRMED:
                 case WAITING:
                     return "redirect:/course/list";
                 default:
@@ -149,7 +152,7 @@ public class CourseController{
 
         Enrollment existing = enrollmentService.getEnrollmentByIdAndStudentId(courseId, student.getId());
         if(existing != null){
-            if(existing.getStatus() == EnrollmentStatus.CONFIRM || existing.getStatus() == EnrollmentStatus.WAITING){
+            if(existing.getStatus() == EnrollmentStatus.CONFIRMED || existing.getStatus() == EnrollmentStatus.WAITING){
                 return "redirect:/course/list";
             }
 

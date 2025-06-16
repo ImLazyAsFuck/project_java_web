@@ -11,16 +11,105 @@
 <body class="bg-gray-100 w-full h-screen flex flex-col">
 <header th:replace="fragment/admin-header :: header"></header>
 
-<div class="flex flex-1 w-full">
+<main class="flex flex-1 w-full">
     <div class="w-[400px] shrink-0">
         <aside th:replace="fragment/admin-sidebar :: sidebar"></aside>
     </div>
 
-    <div class="flex-1 items-center flex">
+    <div class="flex-1 flex flex-col py-[40px] items-center gap-5">
         <div class="w-full flex justify-between px-10 items-center">
             <h2 class="text-2xl font-bold">Student Management</h2>
         </div>
+        <div class="w-full flex justify-end px-10 gap-3 outline-none items-center">
+            <form th:action="@{/admin/student/list}" method="get" class="inline-block">
+                <select name="sort" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
+                    <option value="id_asc" th:selected="${sort} == 'name_asc'">Name A-Z</option>
+                    <option value="id_desc" th:selected="${sort} == 'name_desc'">Name Z-A</option>
+                    <option value="name_asc" th:selected="${sort} == 'email_asc'">Email A-Z</option>
+                    <option value="name_desc" th:selected="${sort} == 'email_desc'">Email Z-A</option>
+                </select>
+
+                <input type="hidden" name="kw" th:value="${kw}">
+            </form>
+            <form th:action="@{/admin/student/list}" method="get" class="inline-block">
+                <input name="kw" class="px-2 py-1 rounded-md border border-gray-300" type="text"
+                       placeholder="Search by name or email" th:value="${kw}">
+                <input type="submit" class="px-4 py-2 rounded-md border bg-blue-500 text-white" value="Search">
+
+                <input type="hidden" name="sort" th:value="${sort}">
+            </form>
+        </div>
+
+        <table class="w-[95%] mx-auto mt-5 bg-white shadow rounded-lg">
+            <thead class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+            <tr>
+                <th class="px-4 py-3">Student ID</th>
+                <th class="px-4 py-3">Student Name</th>
+                <th class="px-4 py-3">Email</th>
+                <th class="px-4 py-3">Gender</th>
+                <th class="px-4 py-3">Phone</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${students}" class="border-t text-sm hover:bg-gray-50">
+                <td class="px-4 py-2" th:text="${s.id}"></td>
+                <td class="px-4 py-2" th:text="${s.name}"></td>
+                <td class="px-4 py-2" th:text="${s.email}"></td>
+                <td class="px-4 py-2" th:text="${s.gender ? 'Male' : 'Female'}"></td>
+                <td class="px-4 py-2" th:text="${s.phone}"></td>
+                <td class="px-4 py-2">
+                    <span th:if="${s.status}" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Active</span>
+                    <span th:unless="${s.status}" class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">Inactive</span>
+                </td>
+                <td class="px-4 py-2 flex gap-2">
+                    <a th:if="${s.status == true}"
+                       th:href="@{'/admin/student/toggleStatus/' + ${s.id}}"
+                       class="text-red-500 hover:text-red-700">
+                        🔒
+                    </a>
+
+                    <a th:if="${s.status == false}"
+                       th:href="@{'/admin/student/toggleStatus/' + ${s.id}}"
+                       class="text-green-500 hover:text-green-700">
+                        🔓
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${totalPages > 1}" class="w-full fixed bottom-[50px] flex justify-center mt-6">
+            <ul class="inline-flex items-center space-x-1 text-sm">
+                <!-- Previous button -->
+                <li>
+                    <a th:href="@{/admin/student/list(page=${currentPage - 1}, sort=${sort}, status=${status}, kw=${kw})}"
+                       th:classappend="${currentPage == 1} ? 'pointer-events-none text-gray-300 border-gray-300' : 'hover:bg-gray-100 text-gray-700 border-gray-300'"
+                       class="px-3 py-2 bg-white border rounded">
+                        &laquo;
+                    </a>
+                </li>
+
+                <!-- Page numbers -->
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a th:href="@{/admin/course/list(page=${i}, sort=${sort}, kw=${kw})}"
+                       th:classappend="${i == currentPage} ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 hover:bg-gray-100 border-gray-300'"
+                       class="px-3 py-2 border rounded"
+                       th:text="${i}">1</a>
+                </li>
+
+                <!-- Next button -->
+                <li>
+                    <a th:href="@{/admin/course/list(page=${currentPage + 1}, sort=${sort}, kw=${kw})}"
+                       th:classappend="${currentPage == totalPages} ? 'pointer-events-none text-gray-300 border-gray-300' : 'hover:bg-gray-100 text-gray-700 border-gray-300'"
+                       class="px-3 py-2 bg-white border rounded">
+                        &raquo;
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
+</main>
 </body>
 </html>
