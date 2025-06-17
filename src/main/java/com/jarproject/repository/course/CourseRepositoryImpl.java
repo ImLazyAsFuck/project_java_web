@@ -84,7 +84,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public List<Course> searchByName(String name, int page, int size, String orderBy, String orderType, boolean status) {
         try {
-            StringBuilder jpql = new StringBuilder("SELECT c FROM course c WHERE LOWER(c.name) LIKE :name AND c.status = :status");
+            StringBuilder jpql = new StringBuilder("SELECT c FROM Course c WHERE LOWER(c.name) LIKE :name AND c.status = :status");
 
             if (orderBy != null && (orderBy.equals("id") || orderBy.equals("name"))) {
                 String direction = "desc".equalsIgnoreCase(orderType) ? "DESC" : "ASC";
@@ -123,7 +123,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public List<Course> findAll(int page, int size, String orderBy, String orderType, boolean status) {
         try {
-            StringBuilder jpql = new StringBuilder("SELECT c FROM course c WHERE c.status = :status");
+            StringBuilder jpql = new StringBuilder("SELECT c FROM Course c WHERE c.status = :status");
 
             if (orderBy != null && (orderBy.equals("id") || orderBy.equals("name"))) {
                 String direction = "desc".equalsIgnoreCase(orderType) ? "DESC" : "ASC";
