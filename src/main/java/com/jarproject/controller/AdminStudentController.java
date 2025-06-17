@@ -5,9 +5,7 @@ import com.jarproject.service.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -41,6 +39,12 @@ public class AdminStudentController{
             return "redirect:/login";
         }
 
+        getData(model, page, sort, kw);
+        model.addAttribute("isShowForm", false);
+        return "admin/student-management/student-list";
+    }
+
+    private void getData(Model model, int page, String sort, String kw){
         int size = 10;
 
         String orderBy = "name";
@@ -77,6 +81,52 @@ public class AdminStudentController{
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("sort", sort);
         model.addAttribute("kw", kw);
+    }
+
+    @GetMapping("toggle-status/{id}")
+    public String showFormAdd(@PathVariable Integer id, Model model){
+        Integer curUser = (Integer) session.getAttribute("curUser");
+        if(curUser == null){
+            return "redirect:/login";
+        }
+        Student sessionStudent = studentService.findById(curUser);
+        if(sessionStudent == null || !sessionStudent.isStatus() || !sessionStudent.isRole()){
+            return "redirect:/login";
+        }
+
+        Student targetStudent = studentService.findById(id);
+        if (targetStudent == null) {
+            return "redirect:/admin/student/list";
+        }
+
+        model.addAttribute("isShowForm", true);
+        model.addAttribute("student", targetStudent);
+        model.addAttribute("status", targetStudent.isStatus());
+        model.addAttribute("button", targetStudent.isStatus() ? "Khoá" : "Mở khoá");
+        model.addAttribute("message", targetStudent.isStatus() ?
+                "Bạn có chắc chắn muốn khoá sinh viên này không?" :
+                "Bạn có chắc chắn muốn mở khoá sinh viên này không?");
+        getData(model, 1, null, null);
         return "admin/student-management/student-list";
+    }
+
+    @PostMapping("toggle-status/{id}")
+    public String toggleStatus(@PathVariable Integer id, Model model){
+        Integer curUser = (Integer) session.getAttribute("curUser");
+        if(curUser == null){
+            return "redirect:/login";
+        }
+        Student sessionStudent = studentService.findById(curUser);
+        if(sessionStudent == null || !sessionStudent.isStatus() || !sessionStudent.isRole()){
+            return "redirect:/login";
+        }
+
+        Student targetStudent = studentService.findById(id);
+        if (targetStudent == null) {
+            return "redirect:/admin/student/list";
+        }
+        targetStudent.setStatus(!targetStudent.isStatus());
+        studentService.update(targetStudent);
+        return "redirect:/admin/student/list";
     }
 }

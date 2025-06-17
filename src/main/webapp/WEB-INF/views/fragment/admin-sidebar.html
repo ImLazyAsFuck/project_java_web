@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-<aside th:fragment="sidebar" class="h-full p-10 w-full">
+<aside th:fragment="sidebar" class="h-full p-8 w-full">
     <div class="w-full flex flex-col gap-4 justify-center">
         <a th:classappend="${#request.requestURI.contains('/admin/dashboard') ? 'text-blue-500' : ''}"
            th:href="@{/admin/dashboard}"

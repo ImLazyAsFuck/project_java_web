@@ -121,19 +121,18 @@
     </div>
 
     <!-- Pagination -->
-    <div th:if="${totalPages > 1}" class="flex justify-center mt-8">
+    <div class="flex justify-center mt-8">
         <nav class="flex items-center space-x-2">
             <!-- Previous Button -->
             <a th:href="@{/course/list(page=${currentPage - 1}, name=${name})}"
-               th:classappend="${currentPage == 1} ? 'pointer-events-none text-gray-300' : 'text-gray-500 hover:text-gray-700'"
-               class="px-3 py-2">
+               th:classappend="${currentPage == 1} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
+               class="px-3 py-2 rounded border bg-white border-gray-300">
                 ←
             </a>
 
             <!-- Page Numbers -->
             <div th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
                  th:if="${pageNum <= 7 or pageNum == totalPages or (pageNum >= currentPage - 2 and pageNum <= currentPage + 2)}">
-
                 <!-- Current Page -->
                 <span th:if="${pageNum == currentPage}"
                       class="px-3 py-2 bg-blue-500 text-white rounded"
@@ -142,7 +141,7 @@
                 <!-- Other Pages -->
                 <a th:unless="${pageNum == currentPage}"
                    th:href="@{/course/list(page=${pageNum}, name=${name})}"
-                   class="px-3 py-2 text-gray-500 hover:text-gray-700"
+                   class="px-3 py-2 text-gray-500 bg-white hover:text-gray-700 border border-gray-300 rounded"
                    th:text="${pageNum}">1</a>
 
                 <!-- Ellipsis -->
@@ -152,8 +151,8 @@
 
             <!-- Next Button -->
             <a th:href="@{/course/list(page=${currentPage + 1}, name=${name})}"
-               th:classappend="${currentPage == totalPages} ? 'pointer-events-none text-gray-300' : 'text-gray-500 hover:text-gray-700'"
-               class="px-3 py-2">
+               th:classappend="${currentPage == totalPages} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
+               class="px-3 py-2 rounded border bg-white border-gray-300">
                 →
             </a>
         </nav>
