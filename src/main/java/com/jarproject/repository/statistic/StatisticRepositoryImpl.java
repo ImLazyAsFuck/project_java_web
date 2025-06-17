@@ -51,7 +51,7 @@ public class StatisticRepositoryImpl implements StatisticRepository{
             List<Object[]> results = em.createQuery(
                     "SELECT c, " +
                             "(SELECT COUNT(e2) FROM Enrollment e2 " +
-                            " WHERE e2.course = c AND e2.student.status = true AND e2.student.role = false) as studentCount " +
+                            " WHERE e2.course = c AND e2.student.status = true and e2.student.role = false) as studentCount " +
                             "FROM Course c " +
                             "WHERE c.status = true " +
                             "ORDER BY studentCount DESC",
@@ -77,7 +77,7 @@ public class StatisticRepositoryImpl implements StatisticRepository{
             List<Object[]> results = em.createQuery(
                             "SELECT c, " +
                                     "(SELECT COUNT(e2) FROM Enrollment e2 " +
-                                    " WHERE e2.course = c AND e2.student.status = true AND e2.student.role = false) as enrollmentCount " +
+                                    " WHERE e2.course = c AND e2.student.role = false) as enrollmentCount " +
                                     "FROM Course c " +
                                     "WHERE c.status = true " +
                                     "ORDER BY enrollmentCount DESC",
