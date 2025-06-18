@@ -26,10 +26,11 @@
         <div class="w-full flex justify-end px-10 gap-3 outline-none items-center">
             <form th:action="@{/admin/student/list}" method="get" class="inline-block">
                 <select name="sort" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
-                    <option value="id_asc" th:selected="${sort} == 'name_asc'">Name A-Z</option>
-                    <option value="id_desc" th:selected="${sort} == 'name_desc'">Name Z-A</option>
-                    <option value="name_asc" th:selected="${sort} == 'email_asc'">Email A-Z</option>
-                    <option value="name_desc" th:selected="${sort} == 'email_desc'">Email Z-A</option>
+                    <option value="">Sort By</option>
+                    <option value="name_asc" th:selected="${sort} == 'name_asc'">Name A-Z</option>
+                    <option value="name_desc" th:selected="${sort} == 'name_desc'">Name Z-A</option>
+                    <option value="email_asc" th:selected="${sort} == 'email_asc'">Email A-Z</option>
+                    <option value="email_desc" th:selected="${sort} == 'email_desc'">Email Z-A</option>
                 </select>
 
                 <input type="hidden" name="kw" th:value="${kw}">

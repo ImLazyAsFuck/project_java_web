@@ -15,6 +15,7 @@ public interface StudentService{
     boolean isEmailExist(String email);
     boolean isPhoneExist(String phone);
     Student login(String email, String password);
+    boolean isEmailExistExceptId(String email, Integer excludeId);
 
     List<Student> searchByNameAndEmail(String kw, int page, int size, String orderBy, String orderType);
     List<Student> findAll(int page, int size, String orderBy, String orderType);

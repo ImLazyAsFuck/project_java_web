@@ -1,6 +1,7 @@
 package com.jarproject.controller;
 
 import com.jarproject.entity.Enrollment;
+import com.jarproject.entity.EnrollmentStatus;
 import com.jarproject.entity.Student;
 import com.jarproject.service.enrollment.EnrollmentService;
 import com.jarproject.service.student.StudentService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -84,5 +86,37 @@ public class EnrollmentController{
         model.addAttribute("kw", kw);
     }
 
+    @PostMapping("list")
+    public String changeStatus(
+            @RequestParam("id") Integer id,
+            @RequestParam("status") String status
+    ){
+        Integer curUser = (Integer) httpSession.getAttribute("curUser");
+        if(curUser == null){
+            return "redirect:/login";
+        }
+        Student sessionStudent = studentService.findById(curUser);
+        if(sessionStudent == null || !sessionStudent.isStatus()){
+            return "redirect:/login";
+        }
 
+        if(id == null){
+            return "redirect:/enrollment/list";
+        }
+
+        if(status == null || status.trim().isEmpty()){
+            return "redirect:/enrollment/list";
+        }
+
+        Enrollment e = enrollmentService.findById(id);
+
+        if(e == null){
+            return "redirect:/enrollment/list";
+        }
+
+        e.setStatus(EnrollmentStatus.valueOf(status.toUpperCase()));
+        enrollmentService.updateEnrollment(e);
+
+        return "redirect:/enrollment/list";
+    }
 }

@@ -130,13 +130,36 @@ public class StudentRepositoryImpl implements StudentRepository{
     }
 
     @Override
+    public boolean isEmailExistExceptId(String email, Integer excludeId) {
+        try{
+            TypedQuery<Boolean> query = em.createQuery(
+                    "SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END FROM Student s WHERE s.email = :email AND s.id <> :excludeId", Boolean.class
+            );
+            query.setParameter("email", email);
+            query.setParameter("excludeId", excludeId);
+            return query.getSingleResult();
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+
+    @Override
     public List<Student> searchByNameAndEmail(String kw, int page, int size, String orderBy, String orderType) {
         try {
-            String jpql = "SELECT s FROM Student s WHERE s.role = false AND " +
-                    "(LOWER(s.name) LIKE LOWER(:kw) OR LOWER(s.email) LIKE LOWER(:kw)) " +
-                    "ORDER BY s." + orderBy + " " + orderType;
-
-            TypedQuery<Student> query = em.createQuery(jpql, Student.class);
+            StringBuilder jpql = new StringBuilder("SELECT s FROM Student s WHERE s.role = false AND " +
+                    "(LOWER(s.name) LIKE LOWER(:kw) OR LOWER(s.email) LIKE LOWER(:kw))");
+            if (orderBy != null && !orderBy.trim().isEmpty()) {
+                if ("name".equals(orderBy) || "email".equals(orderBy)) {
+                    jpql.append(" ORDER BY s.").append(orderBy);
+                    if ("desc".equals(orderType)) {
+                        jpql.append(" DESC");
+                    } else {
+                        jpql.append(" ASC");
+                    }
+                }
+            }
+            TypedQuery<Student> query = em.createQuery(jpql.toString(), Student.class);
             query.setParameter("kw", "%" + kw + "%");
             query.setFirstResult((page - 1) * size);
             query.setMaxResults(size);
@@ -148,17 +171,34 @@ public class StudentRepositoryImpl implements StudentRepository{
         }
     }
 
+
     @Override
     public List<Student> findAll(int page, int size, String orderBy, String orderType){
         try{
-            TypedQuery<Student> query = em.createQuery("SELECT s FROM Student s where s.role = false", Student.class);
+            StringBuilder jpql = new StringBuilder("SELECT s FROM Student s WHERE s.role = false");
+
+            if (orderBy != null && !orderBy.trim().isEmpty()) {
+                if ("name".equals(orderBy) || "email".equals(orderBy)) {
+                    jpql.append(" ORDER BY s.").append(orderBy);
+                    if ("desc".equals(orderType)) {
+                        jpql.append(" DESC");
+                    } else {
+                        jpql.append(" ASC");
+                    }
+                }
+            }
+
+            TypedQuery<Student> query = em.createQuery(jpql.toString(), Student.class);
             query.setFirstResult((page - 1) * size);
             query.setMaxResults(size);
             return query.getResultList();
         }catch(Exception e){
+            e.printStackTrace();
             return new ArrayList<>();
         }
     }
+
+
 
     @Override
     public long count(){

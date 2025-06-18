@@ -34,8 +34,7 @@ public class AuthController{
             return "redirect:/login";
         }
         if(sessionStudent.isRole()){
-            httpSession.removeAttribute("curUser");
-            return "redirect:/login";
+            return "redirect:/admin";
         }
         return "redirect:/course/list";
     }

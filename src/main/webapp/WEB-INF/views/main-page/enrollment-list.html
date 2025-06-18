@@ -73,10 +73,13 @@
 
                         </td>
                         <td class="px-6 py-4">
-                            <button th:if="${enrollment.status.name() == 'WAITING'}"
-                                    class="bg-yellow-400 hover:bg-yellow-500 border border-yellow-500 text-white text-xs px-4 py-1 rounded-md font-semibold">
-                                CANCEL
-                            </button>
+                            <form th:if="${enrollment.status.name() == 'WAITING'}" th:action="@{/enrollment/list}" method="post" style="display: inline;" class="ml-2">
+                                <input type="hidden" name="id" th:value="${enrollment.id}">
+                                <input type="hidden" name="status" value="CANCELED">
+                                <button type="submit" class="bg-yellow-300 hover:bg-yellow-400 text-yellow-500 hover:text-yellow-600 border-yellow-500 hover:border-yellow-600 border-[1px] text-white px-3 py-1 rounded text-xs font-medium">
+                                    CANCEL
+                                </button>
+                            </form>
                             <span th:unless="${enrollment.status.name() == 'WAITING'}"
                                   class="text-gray-400 text-xs">No Action</span>
                         </td>

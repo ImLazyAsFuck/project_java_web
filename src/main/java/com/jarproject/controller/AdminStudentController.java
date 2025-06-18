@@ -47,7 +47,7 @@ public class AdminStudentController{
     private void getData(Model model, int page, String sort, String kw){
         int size = 10;
 
-        String orderBy = "name";
+        String orderBy = null;
         String orderType = "asc";
 
         if (sort != null && !sort.trim().isEmpty()) {

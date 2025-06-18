@@ -65,6 +65,12 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    public boolean isEmailExistExceptId(String email, Integer excludeId){
+        return studentRepository.isEmailExistExceptId(email, excludeId);
+    }
+
+
+    @Override
     public List<Student> searchByNameAndEmail(String kw, int page, int size, String orderBy, String orderType){
         return studentRepository.searchByNameAndEmail(kw, page, size, orderBy, orderType);
     }

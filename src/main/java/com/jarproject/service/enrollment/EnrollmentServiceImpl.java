@@ -38,6 +38,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    public Enrollment findById(Integer id){
+        return enrollmentRepository.findById(id);
+    }
+
+    @Override
     public List<Enrollment> getEnrollmentsByStudentId(Integer studentId, int page, int size, String orderBy, String orderType){
         return enrollmentRepository.getEnrollmentsByStudentId(studentId, page, size, orderBy, orderType);
     }
@@ -55,5 +60,25 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     public long countByCourseName(String name, Integer studentId){
         return enrollmentRepository.countByCourseName(name, studentId);
+    }
+
+    @Override
+    public List<Enrollment> findAll(int page, int size, String status){
+        return enrollmentRepository.findAll(page, size, status);
+    }
+
+    @Override
+    public List<Enrollment> searchByCourseName(String name, int page, int size, String status){
+        return enrollmentRepository.searchByCourseName(name, page, size, status);
+    }
+
+    @Override
+    public long countByCourseName(String name, String status){
+        return enrollmentRepository.countByCourseName(name, status);
+    }
+
+    @Override
+    public long countEnrollment(String status){
+        return enrollmentRepository.countEnrollment(status);
     }
 }

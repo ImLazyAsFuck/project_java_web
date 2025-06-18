@@ -12,15 +12,115 @@
 <header th:replace="fragment/admin-header :: header"></header>
 
 <div class="flex flex-1 w-full">
-    <div class="w-[400px] shrink-0">
+    <div class="w-[300px] shrink-0">
         <aside th:replace="fragment/admin-sidebar :: sidebar"></aside>
     </div>
 
-    <div class="flex-1 items-center flex">
+    <div class="flex-1 flex flex-col py-[40px] items-center gap-5">
         <div class="w-full flex justify-between px-10 items-center">
-            <h2 class="text-2xl font-bold">Student Management</h2>
+            <h2 class="text-2xl font-bold">Enrollment Management</h2>
+        </div>
+        <div class="w-full flex justify-end px-10 gap-3 outline-none items-center">
+            <form th:action="@{/admin/enrollment/list}" method="get" class="inline-block">
+                <select name="status" class="px-2 py-1 rounded-md border border-gray-300" onchange="this.form.submit()">
+                    <option value="">Select By Status</option>
+                    <option value="WAITING" th:selected="${status} == 'WAITING'">WAITING</option>
+                    <option value="DENIED" th:selected="${status} == 'DENIED'">DENIED</option>
+                    <option value="CONFIRMED" th:selected="${status} == 'CONFIRMED'">CONFIRMED</option>
+                    <option value="CANCELED" th:selected="${status} == 'CANCELED'">CANCELED</option>
+                    <!--                <option value="COMPLETED" th:selected="${filter} == 'COMPLETED'">Email Z-A</option>-->
+                </select>
+
+                <input type="hidden" name="kw" th:value="${kw}">
+            </form>
+            <form th:action="@{/admin/enrollment/list}" method="get" class="inline-block">
+                <input name="kw" class="px-2 py-1 rounded-md border border-gray-300" type="text"
+                       placeholder="Search by name or email" th:value="${kw}">
+                <input type="submit" class="px-4 py-2 rounded-md border bg-blue-500 text-white" value="Search">
+
+                <input type="hidden" name="status" th:value="${status}">
+            </form>
+        </div>
+
+        <table class="w-[95%] mx-auto mt-5 bg-white shadow rounded-lg">
+            <thead class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+            <tr>
+                <th class="px-4 py-3">Enrollment ID</th>
+                <th class="px-4 py-3">Student Name</th>
+                <th class="px-4 py-3">Course Name</th>
+                <th class="px-4 py-3">Registered Date</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${enrollments}" class="border-t text-sm hover:bg-gray-50">
+                <td class="px-4 py-2" th:text="${e.id}"></td>
+                <td class="px-4 py-2" th:text="${e.student.name}"></td>
+                <td class="px-4 py-2" th:text="${e.course.name}"></td>
+                <td class="px-4 py-2" th:text="${e.getFormattedRegisteredAt}"></td>
+                <td class="px-4 py-2" >
+                 <span th:class="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + ${e.statusColorClass}">
+                        <span th:text="${e.status}">WAITING</span>
+                 </span>
+                </td>
+                <td class="px-4 py-2 flex gap-2">
+                    <div th:if="${e.status.name() == 'WAITING'}">
+                        <form th:action="@{/admin/enrollment/list}" method="post" style="display: inline;">
+                            <input type="hidden" name="id" th:value="${e.id}">
+                            <input type="hidden" name="status" value="CONFIRMED">
+                            <button type="submit" class="bg-green-300 text-green-500 border-green-500 hover:border-green-600 hover:text-green-600 hover:bg-green-400 border-[1px] px-2 py-1 rounded text-xs font-medium">
+                                CONFIRM
+                            </button>
+                        </form>
+
+                        <form th:action="@{/admin/enrollment/list}" method="post" style="display: inline;" class="ml-2">
+                            <input type="hidden" name="id" th:value="${e.id}">
+                            <input type="hidden" name="status" value="DENIED">
+                            <button type="submit" class="bg-yellow-300 hover:bg-yellow-400 text-yellow-500 hover:text-yellow-600 border-yellow-500 hover:border-yellow-600 border-[1px] text-white px-3 py-1 rounded text-xs font-medium">
+                                DENIED
+                            </button>
+                        </form>
+                    </div>
+                    <div class="px-5" th:unless="${e.status.name() == 'WAITING'}">
+                        <p class="">No action</p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="w-full fixed bottom-[50px] flex justify-center mt-6">
+            <ul class="inline-flex items-center space-x-1 text-sm">
+                <!-- Previous button -->
+                <li>
+                    <a th:href="@{/admin/enrollment/list(page=${currentPage - 1}, status=${status}, kw=${kw})}"
+                       th:classappend="${currentPage == 1} ? 'pointer-events-none text-gray-300 border-gray-300' : 'hover:bg-gray-100 text-gray-700 border-gray-300'"
+                       class="px-3 py-2 bg-white border rounded">
+                        &laquo;
+                    </a>
+                </li>
+
+                <!-- Page numbers -->
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a th:href="@{/admin/enrollment/list(page=${i}, kw=${kw}, status=${status})}"
+                       th:classappend="${i == currentPage} ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 hover:bg-gray-100 border-gray-300'"
+                       class="px-3 py-2 border rounded"
+                       th:text="${i}">1</a>
+                </li>
+
+                <!-- Next button -->
+                <li>
+                    <a th:href="@{/admin/enrollment/list(page=${currentPage + 1}, kw=${kw}, status=${status})}"
+                       th:classappend="${currentPage == totalPages} ? 'pointer-events-none text-gray-300 border-gray-300' : 'hover:bg-gray-100 text-gray-700 border-gray-300'"
+                       class="px-3 py-2 bg-white border rounded">
+                        &raquo;
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
+
 </div>
 </body>
 </html>
