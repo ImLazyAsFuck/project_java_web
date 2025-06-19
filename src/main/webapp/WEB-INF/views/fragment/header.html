@@ -10,7 +10,7 @@
 <body>
 <header th:fragment="header" class="w-full px-4 justify-between flex items-center bg-white">
     <img onclick="window.location.href='/course/list'" src="https://res.cloudinary.com/dyvpntnlo/image/upload/v1749712739/819bc04f5546ebd7a87a7a8ebe401a97208935eb_ev0ax6.png"
-         class="w-[100px] h-auto ml-[100px] object-contain" alt="">
+         class="w-[100px] h-auto ml-[100px] cursor-pointer object-contain" alt="">
     <nav class="flex justify-around gap-6 p-2">
         <a th:classappend="${#request.requestURI.contains('/course') ? 'text-blue-500' : ''}" class="text-xl font-300" href="/course/list">
             List Course

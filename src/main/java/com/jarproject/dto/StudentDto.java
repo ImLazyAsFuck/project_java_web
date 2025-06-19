@@ -42,7 +42,7 @@ public class StudentDto{
 
     @NotBlank(message = "Password can't be empty")
     @Pattern(
-            regexp = "^(?=.*[a-zA-Z])(?=.*[\\d_@#-]).{8,}$",
+            regexp = "^$|^(?=.*[a-zA-Z])(?=.*[\\d_@#-]).{8,}$",
             message = "Password must be at least 8 characters and include at least one letter and one number or special character (_, -, @, #)"
     )
     private String password;
