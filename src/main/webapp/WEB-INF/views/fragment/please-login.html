@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div th:if="${!isLogin}" th:fragment="please-login"
+     class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-xl shadow-lg w-80 text-center">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">⚠️ Bạn chưa đăng nhập!</h2>
+        <p class="text-gray-600 mb-6">Vui lòng đăng nhập để tiếp tục sử dụng dịch vụ.</p>
+        <a href="/login"
+           class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition">
+            🔐 Đăng nhập ngay
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

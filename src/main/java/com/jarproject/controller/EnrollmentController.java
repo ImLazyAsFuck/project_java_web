@@ -48,7 +48,8 @@ public class EnrollmentController{
         }
 
         getData(page, sort, kw, model, sessionStudent);
-
+        model.addAttribute("isShowForm", false);
+        model.addAttribute("isLogin", true);
         return "main-page/enrollment-list";
     }
 
@@ -76,7 +77,7 @@ public class EnrollmentController{
             totalItems = enrollmentService.count(sessionStudent.getId());
         }
 
-        int totalPages = (int) Math.ceil((double) totalItems / size);
+        long totalPages = totalItems > 0 ? (long)Math.ceil((double)totalItems / size) : 0;
 
         model.addAttribute("enrollments", enrollments);
         model.addAttribute("currentPage", page);
@@ -89,8 +90,8 @@ public class EnrollmentController{
     @PostMapping("list")
     public String changeStatus(
             @RequestParam("id") Integer id,
-            @RequestParam("status") String status
-    ){
+            @RequestParam("status") String status,
+            Model model){
         Integer curUser = (Integer) httpSession.getAttribute("curUser");
         if(curUser == null){
             return "redirect:/login";
@@ -116,6 +117,7 @@ public class EnrollmentController{
 
         e.setStatus(EnrollmentStatus.valueOf(status.toUpperCase()));
         enrollmentService.updateEnrollment(e);
+        model.addAttribute("isLogin", true);
 
         return "redirect:/enrollment/list";
     }

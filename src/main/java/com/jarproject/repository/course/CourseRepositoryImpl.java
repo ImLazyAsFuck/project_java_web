@@ -142,13 +142,20 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public List<Course> findAllCourse(int page, int size){
-        try{
-            TypedQuery<Course> query = em.createQuery("SELECT c FROM Course c where status=true", Course.class);
+    public List<Course> findAllCourse(int page, int size) {
+        try {
+            TypedQuery<Course> query = em.createQuery(
+                    "SELECT c FROM Course c " +
+                            "LEFT JOIN Enrollment e ON e.course = c AND e.status = 'CONFIRMED' " +
+                            "WHERE c.status = true " +
+                            "GROUP BY c " +
+                            "ORDER BY COUNT(e) DESC",
+                    Course.class
+            );
             query.setFirstResult((page - 1) * size);
             query.setMaxResults(size);
             return query.getResultList();
-        }catch(Exception e){
+        } catch (Exception e) {
             return new ArrayList<>();
         }
     }

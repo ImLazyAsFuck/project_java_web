@@ -63,7 +63,7 @@ public class AdminEnrollmentController{
             totalItems = enrollmentService.countEnrollment(status);
         }
 
-        totalPages = (long) Math.ceil((double) totalItems / size);
+        totalPages = totalItems > 0 ? (long)Math.ceil((double)totalItems / size) : 1;
         model.addAttribute("enrollments", enrollments);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);

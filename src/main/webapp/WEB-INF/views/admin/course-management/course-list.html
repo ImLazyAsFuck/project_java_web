@@ -80,7 +80,7 @@
                 <td class="px-4 py-2" th:text="${c.duration}"></td>
                 <td class="px-4 py-2" th:text="${c.instructor}"></td>
                 <td class="px-4 py-2">
-                    <img th:src="${c.image}" alt="Course Image" class="w-12 h-12 object-cover rounded" />
+                    <img th:src="${c.image != null && !c.image.trim().isEmpty()? c.image : 'https://i.pinimg.com/736x/20/49/bf/2049bff77ef0760e4e2dac92ab0bdc82.jpg'}" alt="Course Image" class="w-12 h-12 object-cover rounded" />
                 </td>
                 <td th:text="${c.formattedCreateAt}"></td>
                 <td class="px-4 py-2 flex gap-2">

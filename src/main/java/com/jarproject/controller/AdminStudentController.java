@@ -75,7 +75,8 @@ public class AdminStudentController{
             students = studentService.findAll(page, size, orderBy, orderType);
             totalItems = studentService.count();
         }
-        totalPages = (long) Math.ceil((double) totalItems / size);
+        totalPages = totalItems > 0 ? (long)Math.ceil((double)totalItems / size) : 1;
+
         model.addAttribute("students", students);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);

@@ -38,6 +38,8 @@ public class ProfileController{
             return "redirect:/login";
         }
         model.addAttribute("isShowForm", false);
+        model.addAttribute("isLogin", true);
+
         getData(model, sessionStudent);
         return "main-page/profile";
     }
@@ -85,6 +87,7 @@ public class ProfileController{
         sessionStudent.setPassword(PasswordUtil.hashPassword(passwordDto.getNewPassword()));
         studentService.update(sessionStudent);
         model.addAttribute("isShowForm", false);
+        model.addAttribute("isLogin", true);
         return "redirect:/profile";
     }
 
@@ -103,6 +106,7 @@ public class ProfileController{
         getData(model, sessionStudent);
         model.addAttribute("isShowForm", true);
         model.addAttribute("passwordDto", new PasswordDto());
+        model.addAttribute("isLogin", true);
         return "main-page/profile";
     }
 
@@ -120,18 +124,18 @@ public class ProfileController{
         if(sessionStudent == null || !sessionStudent.isStatus()){
             return "redirect:/login";
         }
-        getData(model, sessionStudent);
         if(bindingResult.hasErrors()){
             return "main-page/profile";
         }
 
-        if (studentService.isEmailExistExceptId(studentDto.getEmail(), curUser)) {
+        if (studentService.isEmailExistExceptId(studentDto.getEmail(), sessionStudent.getId())) {
             bindingResult.rejectValue("email", "email.duplicate", "Email này đã được sử dụng bởi tài khoản khác");
             return "main-page/profile";
         }
 
         modelMapper.map(studentDto, sessionStudent);
         studentService.update(sessionStudent);
+        model.addAttribute("isLogin", true);
         return "redirect:/profile";
     }
 }

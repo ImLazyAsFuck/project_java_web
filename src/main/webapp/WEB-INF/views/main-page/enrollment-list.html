@@ -63,7 +63,7 @@
                         <td class="px-6 py-4" th:text="${enrollment.course.duration}">200</td>
                         <td class="px-6 py-4" th:text="${enrollment.course.instructor}">Instructor</td>
                         <td class="px-6 py-4">
-                            <img th:src="${enrollment.course.image}" alt="" class="w-12 h-12 object-cover rounded">
+                            <img th:src="${enrollment.course.image != null && !enrollment.course.image.trim().isEmpty()? enrollment.course.image : 'https://i.pinimg.com/736x/20/49/bf/2049bff77ef0760e4e2dac92ab0bdc82.jpg'}" alt="" class="w-12 h-12 object-cover rounded">
                         </td>
                         <td class="px-6 py-4" th:text="${enrollment.getFormattedRegisteredAt()}">01/06/2025</td>
                         <td class="px-6 py-4">
@@ -90,34 +90,39 @@
         </div>
 
         <!-- Pagination -->
-        <div th:if="${totalPages > 1}" class="mt-6 flex items-center justify-between bg-white px-6 py-4 rounded-lg shadow-sm">
-            <div class="text-sm text-gray-700">
-                Showing <span class="font-medium" th:text="${(currentPage - 1) * 5 + 1}">1</span>
-                to <span class="font-medium" th:text="${currentPage * 5 > totalItems ? totalItems : currentPage * 5}">5</span>
-                of <span class="font-medium" th:text="${totalItems}">10</span> results
-            </div>
-
+        <div th:if="${totalPages > 1}" class="flex justify-center mt-8">
             <nav class="flex items-center space-x-2">
                 <!-- Previous Button -->
-                <a th:if="${currentPage > 1}"
-                   th:href="@{/enrollment/list(page=${currentPage - 1}, sort=${sort}, kw=${kw})}"
-                   class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                    Previous
+                <a th:if="${totalPages > 1}" th:href="@{/enrollment/list(page=${currentPage - 1}, sort=${sort}, kw=${kw})}"
+                   th:classappend="${currentPage == 1} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
+                   class="px-3 py-2 rounded border bg-white border-gray-300">
+                    ←
                 </a>
 
                 <!-- Page Numbers -->
-                <div class="flex space-x-1">
-                    <a th:each="i : ${#numbers.sequence(1, totalPages)}"
-                       th:href="@{/enrollment/list(page=${i}, sort=${sort}, kw=${kw})}"
-                       th:class="${i == currentPage ? 'bg-blue-500 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'} + ' px-3 py-2 text-sm font-medium border border-gray-300 rounded-md'"
-                       th:text="${i}">1</a>
+                <div th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                     th:if="${pageNum <= 7 or pageNum == totalPages or (pageNum >= currentPage - 2 and pageNum <= currentPage + 2)}">
+                    <!-- Current Page -->
+                    <span th:if="${pageNum == currentPage}"
+                          class="px-3 py-2 bg-blue-500 text-white rounded"
+                          th:text="${pageNum}">2</span>
+
+                    <!-- Other Pages -->
+                    <a th:unless="${pageNum == currentPage}"
+                       th:href="@{/course/list(page=${pageNum}, name=${name}, sort=${sort})}"
+                       class="px-3 py-2 text-gray-500 bg-white hover:text-gray-700 border border-gray-300 rounded"
+                       th:text="${pageNum}">1</a>
+
+                    <!-- Ellipsis -->
+                    <span th:if="${pageNum == 7 and totalPages > 10 and currentPage < totalPages - 3}"
+                          class="px-3 py-2 text-gray-500">...</span>
                 </div>
 
                 <!-- Next Button -->
-                <a th:if="${currentPage < totalPages}"
-                   th:href="@{/enrollment/list(page=${currentPage + 1}, sort=${sort}, kw=${kw})}"
-                   class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                    Next
+                <a th:if="${totalPages > 1}" th:href="@{/enrollment/list(page=${currentPage + 1}, name=${name})}"
+                   th:classappend="${currentPage == totalPages} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
+                   class="px-3 py-2 rounded border bg-white border-gray-300">
+                    →
                 </a>
             </nav>
         </div>

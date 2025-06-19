@@ -75,12 +75,10 @@
                     String field = sortParts[0];
                     String direction = sortParts[1];
 
-                    // Validate field
                     if ("id".equals(field) || "name".equals(field)) {
                         orderBy = field;
                     }
 
-                    // Validate direction
                     if ("asc".equals(direction) || "desc".equals(direction)) {
                         orderType = direction;
                     }
@@ -99,7 +97,7 @@
                 totalItems = courseService.count(status);
             }
 
-            totalPages = (long) Math.ceil((double) totalItems / size);
+            totalPages = totalItems > 0 ? (long)Math.ceil((double)totalItems / size) : 1;
 
             model.addAttribute("courses", courses);
             model.addAttribute("currentPage", page);

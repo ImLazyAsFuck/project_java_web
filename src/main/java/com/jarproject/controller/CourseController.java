@@ -42,15 +42,22 @@ public class CourseController{
         Integer curUser = (Integer)session.getAttribute("curUser");
         Student sessionStudent = null;
 
-        if(curUser != null){
+        if (curUser != null) {
             sessionStudent = studentService.findById(curUser);
-            if(sessionStudent != null && !sessionStudent.isStatus()){
+            if (sessionStudent != null && sessionStudent.isStatus()) {
+                model.addAttribute("isLogin", true);
+            } else {
                 sessionStudent = null;
+                model.addAttribute("isLogin", false);
             }
+        } else {
+            model.addAttribute("isLogin", false);
         }
+
 
         getData(page, name, model, sessionStudent);
         model.addAttribute("isRegistry", false);
+
         return "main-page/course-list";
     }
 
@@ -79,7 +86,7 @@ public class CourseController{
             totalItems = courseService.countByName(name, true);
         }
 
-        totalPages = (long)Math.ceil((double)totalItems / size);
+        totalPages = totalItems > 0 ? (long)Math.ceil((double)totalItems / size) : 0;
 
         model.addAttribute("courses", courses);
         model.addAttribute("enrollmentStatusMap", enrollmentStatusMap);

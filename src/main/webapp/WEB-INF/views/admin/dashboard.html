@@ -61,7 +61,7 @@
                     <tr th:each="stat : ${studentStatisticByCourse}" class="border-t hover:bg-gray-50">
                         <td class="px-4 py-2" th:text="${stat.course.id}">C000X</td>
                         <td class="px-4 py-2">
-                            <img th:src="@{${stat.course.image}}" class="w-12 h-12 object-cover rounded" th:alt="${stat.course.name}" />
+                            <img th:src="@{${stat.course.image != null && !stat.course.image.trim().isEmpty()? stat.course.image : 'https://i.pinimg.com/736x/20/49/bf/2049bff77ef0760e4e2dac92ab0bdc82.jpg'}}" class="w-12 h-12 object-cover rounded" th:alt="${stat.course.name}" />
                         </td>
                         <td class="px-4 py-2" th:text="${stat.course.name}">Course Name</td>
                         <td class="px-4 py-2" th:text="${stat.course.duration}">200 mins</td>
@@ -76,7 +76,7 @@
                 <h2 class="text-md font-semibold mb-4">Top 5 course best seller</h2>
                 <div th:each="top : ${top5CourseBestSeller}" class="flex items-center justify-between py-2 border-b last:border-none">
                     <div class="flex items-center gap-3">
-                        <img th:src="@{${top.course.image}}" class="w-10 h-10 object-cover rounded" />
+                        <img th:src="@{${top.course.image != null && !top.course.image.trim().isEmpty()? top.course.image : 'https://i.pinimg.com/736x/20/49/bf/2049bff77ef0760e4e2dac92ab0bdc82.jpg'}}" class="w-10 h-10 object-cover rounded" />
                         <p class="font-medium text-sm" th:text="${top.course.name}">Course Name</p>
                     </div>
                     <span class="text-gray-600 text-sm" th:text="${top.studentCount} + ' Student'">50 Student</span>

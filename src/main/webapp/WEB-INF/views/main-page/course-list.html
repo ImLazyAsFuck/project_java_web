@@ -1,163 +1,163 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen flex items-center justify-center bg-gray-100 flex-col">
+    <!doctype html>
+    <html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="min-h-screen flex items-center justify-center bg-gray-100 flex-col">
 
-<div th:if="${isRegistry}" th:replace="main-page/registration-course :: confirm-register"></div>
+    <div th:if="${isRegistry}" th:replace="main-page/registration-course :: confirm-register"></div>
 
-<header th:replace="fragment/header :: header"></header>
-<main class="w-full flex flex-1 flex-col px-6 py-8">
-    <!-- Page Title -->
-    <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-yellow-500 mb-6">List Course</h1>
+    <header th:replace="fragment/header :: header"></header>
+    <main class="w-full flex flex-1 flex-col px-6 py-8">
+        <!-- Page Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-yellow-500 mb-6">List Course</h1>
 
-        <!-- Search Bar -->
-        <div class="flex justify-end mr-60">
-            <form method="GET" action="/course/list" class="relative w-96">
-                <input type="text"
-                       name="name"
-                       th:value="${name}"
-                       placeholder="Search course by name"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-4 py-1 rounded text-sm hover:bg-blue-600">
-                    Search
-                </button>
-            </form>
+            <!-- Search Bar -->
+            <div class="flex justify-end mr-60">
+                <form method="GET" action="/course/list" class="relative w-96">
+                    <input type="text"
+                           name="name"
+                           th:value="${name}"
+                           placeholder="Search course by name"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-4 py-1 rounded text-sm hover:bg-blue-600">
+                        Search
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <!-- course Grid -->
-    <div class="max-w-7xl mx-auto w-full">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <!-- course Grid -->
+        <div class="max-w-7xl mx-auto w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
 
-            <!-- course Cards -->
-            <div th:each="course : ${courses}" class="bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="relative">
-                    <img th:src="${course.image != null ? course.image : '/images/default-course.jpg'}"
-                         th:alt="${course.name}"
-                         class="w-full h-40 object-cover">
-                </div>
-                <div class="p-4">
-                    <h3 class="font-semibold text-gray-800 mb-2" th:text="${course.name}">Course Name</h3>
-                    <p class="text-green-600 text-sm mb-1">Let's explore</p>
-                    <p class="text-gray-600 text-sm mb-1">
-                        Duration: <span th:text="${course.duration}">120</span> Hour
-                    </p>
-                    <p class="text-gray-600 text-sm mb-1">
-                        Instructor: <span th:text="${course.instructor}">John Smith</span>
-                    </p>
-                    <p class="text-gray-600 text-sm mb-3">
-                        Created: <span th:text="${course.formattedCreateAt}">15/06/2025</span>
-                    </p>
-
-
-                    <div th:switch="${enrollmentStatusMap[course.id]}">
-
-                        <!-- Không được đăng ký lại -->
-                        <div th:case="'CONFIRM'">
-                            <button class="w-full bg-green-400 text-white py-2 rounded cursor-not-allowed" disabled>
-                                Registered
-                            </button>
-                        </div>
-
-                        <div th:case="'WAITING'">
-                            <button class="w-full bg-green-400 text-white py-2 rounded cursor-not-allowed" disabled>
-                                Registered
-                            </button>
-                        </div>
-
-                        <!-- Được phép đăng ký lại -->
-                        <div th:case="'CANCEL'">
-                            <form method="get" th:action="@{/course/register}">
-                                <input type="hidden" name="courseId" th:value="${course.id}">
-                                <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
-                                    Register →
-                                </button>
-                            </form>
-                        </div>
-
-                        <div th:case="'DENIED'">
-                            <form method="get" th:action="@{/course/register}">
-                                <input type="hidden" name="courseId" th:value="${course.id}">
-                                <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
-                                    Register →
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Chưa từng đăng ký thì cho đăng ký -->
-                        <div th:case="*">
-                            <form method="get" th:action="@{/course/register}">
-                                <input type="hidden" name="courseId" th:value="${course.id}">
-                                <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
-                                    Register →
-                                </button>
-                            </form>
-                        </div>
+                <!-- course Cards -->
+                <div th:each="course : ${courses}" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="relative">
+                        <img th:src="${course.image != null && !course.image.trim().isEmpty() ? course.image : 'https://i.pinimg.com/736x/20/49/bf/2049bff77ef0760e4e2dac92ab0bdc82.jpg'}"
+                             th:alt="${course.name}"
+                             class="w-full h-40 object-cover">
                     </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2" th:text="${course.name}">Course Name</h3>
+                        <p class="text-green-600 text-sm mb-1">Let's explore</p>
+                        <p class="text-gray-600 text-sm mb-1">
+                            Duration: <span th:text="${course.duration}">120</span> Hour
+                        </p>
+                        <p class="text-gray-600 text-sm mb-1">
+                            Instructor: <span th:text="${course.instructor}">John Smith</span>
+                        </p>
+                        <p class="text-gray-600 text-sm mb-3">
+                            Created: <span th:text="${course.formattedCreateAt}">15/06/2025</span>
+                        </p>
 
 
+                        <div th:switch="${enrollmentStatusMap[course.id]}">
+
+                            <!-- Không được đăng ký lại -->
+                            <div th:case="'CONFIRM'">
+                                <button class="w-full bg-green-400 text-white py-2 rounded cursor-not-allowed" disabled>
+                                    Registered
+                                </button>
+                            </div>
+
+                            <div th:case="'WAITING'">
+                                <button class="w-full bg-green-400 text-white py-2 rounded cursor-not-allowed" disabled>
+                                    Registered
+                                </button>
+                            </div>
+
+                            <!-- Được phép đăng ký lại -->
+                            <div th:case="'CANCEL'">
+                                <form method="get" th:action="@{/course/register}">
+                                    <input type="hidden" name="courseId" th:value="${course.id}">
+                                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                                        Register →
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div th:case="'DENIED'">
+                                <form method="get" th:action="@{/course/register}">
+                                    <input type="hidden" name="courseId" th:value="${course.id}">
+                                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                                        Register →
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Chưa từng đăng ký thì cho đăng ký -->
+                            <div th:case="*">
+                                <form method="get" th:action="@{/course/register}">
+                                    <input type="hidden" name="courseId" th:value="${course.id}">
+                                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                                        Register →
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${courses.isEmpty}" class="text-center py-12">
+                <div class="text-gray-500 text-lg">
+                    <i class="fas fa-search text-4xl mb-4"></i>
+                    <p>No courses found</p>
+                    <p th:if="${name != null and !name.trim().isEmpty()}" class="text-sm mt-2">
+                        Try searching with different keywords
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Empty State -->
-        <div th:if="${courses.isEmpty}" class="text-center py-12">
-            <div class="text-gray-500 text-lg">
-                <i class="fas fa-search text-4xl mb-4"></i>
-                <p>No courses found</p>
-                <p th:if="${name != null and !name.trim().isEmpty()}" class="text-sm mt-2">
-                    Try searching with different keywords
-                </p>
-            </div>
+        <!-- Pagination -->
+        <div th:if="${totalPages > 0}" class="flex justify-center mt-8">
+            <nav class="flex items-center space-x-2">
+                <!-- Previous Button -->
+                <a th:if="${totalPages > 1}" th:href="@{/course/list(page=${currentPage - 1}, name=${name})}"
+                   th:classappend="${currentPage == 1} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
+                   class="px-3 py-2 rounded border bg-white border-gray-300">
+                    ←
+                </a>
+
+                <!-- Page Numbers -->
+                <div th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                     th:if="${pageNum <= 7 or pageNum == totalPages or (pageNum >= currentPage - 2 and pageNum <= currentPage + 2)}">
+                    <!-- Current Page -->
+                    <span th:if="${pageNum == currentPage}"
+                          class="px-3 py-2 bg-blue-500 text-white rounded"
+                          th:text="${pageNum}">2</span>
+
+                    <!-- Other Pages -->
+                    <a th:unless="${pageNum == currentPage}"
+                       th:href="@{/course/list(page=${pageNum}, name=${name})}"
+                       class="px-3 py-2 text-gray-500 bg-white hover:text-gray-700 border border-gray-300 rounded"
+                       th:text="${pageNum}">1</a>
+
+                    <!-- Ellipsis -->
+                    <span th:if="${pageNum == 7 and totalPages > 10 and currentPage < totalPages - 3}"
+                          class="px-3 py-2 text-gray-500">...</span>
+                </div>
+
+                <!-- Next Button -->
+                <a th:if="${totalPages > 1}" th:href="@{/course/list(page=${currentPage + 1}, name=${name})}"
+                   th:classappend="${currentPage == totalPages} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
+                   class="px-3 py-2 rounded border bg-white border-gray-300">
+                    →
+                </a>
+            </nav>
         </div>
-    </div>
 
-    <!-- Pagination -->
-    <div class="flex justify-center mt-8">
-        <nav class="flex items-center space-x-2">
-            <!-- Previous Button -->
-            <a th:href="@{/course/list(page=${currentPage - 1}, name=${name})}"
-               th:classappend="${currentPage == 1} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
-               class="px-3 py-2 rounded border bg-white border-gray-300">
-                ←
-            </a>
-
-            <!-- Page Numbers -->
-            <div th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
-                 th:if="${pageNum <= 7 or pageNum == totalPages or (pageNum >= currentPage - 2 and pageNum <= currentPage + 2)}">
-                <!-- Current Page -->
-                <span th:if="${pageNum == currentPage}"
-                      class="px-3 py-2 bg-blue-500 text-white rounded"
-                      th:text="${pageNum}">2</span>
-
-                <!-- Other Pages -->
-                <a th:unless="${pageNum == currentPage}"
-                   th:href="@{/course/list(page=${pageNum}, name=${name})}"
-                   class="px-3 py-2 text-gray-500 bg-white hover:text-gray-700 border border-gray-300 rounded"
-                   th:text="${pageNum}">1</a>
-
-                <!-- Ellipsis -->
-                <span th:if="${pageNum == 7 and totalPages > 10 and currentPage < totalPages - 3}"
-                      class="px-3 py-2 text-gray-500">...</span>
-            </div>
-
-            <!-- Next Button -->
-            <a th:href="@{/course/list(page=${currentPage + 1}, name=${name})}"
-               th:classappend="${currentPage == totalPages} ? ' pointer-events-none text-gray-300 cursor-default' : ' text-gray-500 hover:text-gray-700'"
-               class="px-3 py-2 rounded border bg-white border-gray-300">
-                →
-            </a>
-        </nav>
-    </div>
-
-</main>
-</body>
-</html>
+    </main>
+    </body>
+    </html>

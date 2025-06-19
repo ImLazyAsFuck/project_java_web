@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -24,20 +25,22 @@ public class AuthController{
     private HttpSession httpSession;
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index() {
         Integer curUser = (Integer) httpSession.getAttribute("curUser");
-        if(curUser == null){
-            return "redirect:/login";
+
+        if (curUser == null) {
+            return "redirect:/course/list";
         }
-        Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
-            return "redirect:/login";
+
+        Student student = studentService.findById(curUser);
+
+        if (student == null || !student.isStatus()) {
+            return "redirect:/course/list";
         }
-        if(sessionStudent.isRole()){
-            return "redirect:/admin";
-        }
-        return "redirect:/course/list";
+
+        return student.isRole() ? "redirect:/admin" : "redirect:/course/list";
     }
+
 
     @GetMapping("login")
     public String login(Model model){
@@ -52,7 +55,8 @@ public class AuthController{
     }
 
     @PostMapping("login")
-    public String login(@Valid @ModelAttribute LoginDto loginDto, BindingResult bindingResult, Model model){
+    public String login(@Valid @ModelAttribute LoginDto loginDto, BindingResult bindingResult, Model model,
+    RedirectAttributes redirectAttributes){
         if(bindingResult.hasErrors()){
             return "auth/login";
         }
@@ -65,6 +69,7 @@ public class AuthController{
                 return "redirect:/admin";
             } else {
                 httpSession.setAttribute("curUser", loginStudent.getId());
+                redirectAttributes.addFlashAttribute("successMessage", "Login successfully");
                 return "redirect:/course/list";
             }
         } else {
