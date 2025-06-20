@@ -44,6 +44,9 @@ public class CourseController{
 
         if (curUser != null) {
             sessionStudent = studentService.findById(curUser);
+            if(sessionStudent != null && sessionStudent.isRole()){
+                return "redirect:/login";
+            }
             if (sessionStudent != null && sessionStudent.isStatus()) {
                 model.addAttribute("isLogin", true);
             } else {
@@ -109,7 +112,7 @@ public class CourseController{
         }
 
         Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
+        if(sessionStudent == null || !sessionStudent.isStatus() || sessionStudent.isRole()){
             return "redirect:/login";
         }
 
@@ -148,7 +151,7 @@ public class CourseController{
         }
 
         Student student = studentService.findById(curUser);
-        if(student == null || !student.isStatus()){
+        if(student == null || !student.isStatus() || student.isRole()){
             return "redirect:/login";
         }
 

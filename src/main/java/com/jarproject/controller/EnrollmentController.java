@@ -43,7 +43,7 @@ public class EnrollmentController{
             return "redirect:/login";
         }
         Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
+        if(sessionStudent == null || !sessionStudent.isStatus() || sessionStudent.isRole()){
             return "redirect:/login";
         }
 
@@ -97,7 +97,7 @@ public class EnrollmentController{
             return "redirect:/login";
         }
         Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
+        if(sessionStudent == null || !sessionStudent.isStatus() || sessionStudent.isRole()){
             return "redirect:/login";
         }
 
@@ -115,7 +115,14 @@ public class EnrollmentController{
             return "redirect:/enrollment/list";
         }
 
-        e.setStatus(EnrollmentStatus.valueOf(status.toUpperCase()));
+        if(!e.getStatus().equals(EnrollmentStatus.WAITING)){
+            return "redirect:/enrollment/list";
+        }
+        try {
+            e.setStatus(EnrollmentStatus.valueOf(status.toUpperCase()));
+        } catch (IllegalArgumentException ex) {
+            return "redirect:/enrollment/list";
+        }
         enrollmentService.updateEnrollment(e);
         model.addAttribute("isLogin", true);
 

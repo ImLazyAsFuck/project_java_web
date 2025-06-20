@@ -98,6 +98,9 @@ public class AdminEnrollmentController{
         if(e == null){
             return "redirect:/admin/enrollment/list";
         }
+        if(!e.getStatus().equals(EnrollmentStatus.WAITING)){
+            return "redirect:/admin/enrollment/list";
+        }
 
         e.setStatus(EnrollmentStatus.valueOf(status.toUpperCase()));
         enrollmentService.updateEnrollment(e);

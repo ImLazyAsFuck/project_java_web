@@ -32,7 +32,7 @@ public class Enrollment{
     private LocalDateTime registeredAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "enum('WAITING', 'CANCELED', 'DENIED', 'CONFIRMED')")
     private EnrollmentStatus status = EnrollmentStatus.WAITING;
 
     public String getFormattedRegisteredAt() {

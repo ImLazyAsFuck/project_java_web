@@ -34,7 +34,7 @@ public class ProfileController{
             return "redirect:/login";
         }
         Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
+        if(sessionStudent == null || !sessionStudent.isStatus() || sessionStudent.isRole()){
             return "redirect:/login";
         }
         model.addAttribute("isShowForm", false);
@@ -99,7 +99,7 @@ public class ProfileController{
             return "redirect:/login";
         }
         Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
+        if(sessionStudent == null || !sessionStudent.isStatus() || sessionStudent.isRole()){
             return "redirect:/login";
         }
 
@@ -121,7 +121,7 @@ public class ProfileController{
             return "redirect:/login";
         }
         Student sessionStudent = studentService.findById(curUser);
-        if(sessionStudent == null || !sessionStudent.isStatus()){
+        if(sessionStudent == null || !sessionStudent.isStatus() || sessionStudent.isRole()){
             return "redirect:/login";
         }
         if(bindingResult.hasErrors()){
