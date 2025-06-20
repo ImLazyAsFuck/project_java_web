@@ -143,6 +143,20 @@ public class StudentRepositoryImpl implements StudentRepository{
         }
     }
 
+    @Override
+    public boolean isPhoneExistExceptId(String phone, Integer excludeId){
+        try{
+            TypedQuery<Boolean> query = em.createQuery(
+                    "SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END FROM Student s WHERE s.phone = :phone AND s.id <> :excludeId", Boolean.class
+            );
+            query.setParameter("phone", phone);
+            query.setParameter("excludeId", excludeId);
+            return query.getSingleResult();
+        }catch(Exception e){
+            return false;
+        }
+    }
+
 
     @Override
     public List<Student> searchByNameAndEmail(String kw, int page, int size, String orderBy, String orderType) {

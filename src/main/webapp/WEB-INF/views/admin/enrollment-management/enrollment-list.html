@@ -35,7 +35,7 @@
             </form>
             <form th:action="@{/admin/enrollment/list}" method="get" class="inline-block">
                 <input name="kw" class="px-2 py-1 rounded-md border border-gray-300" type="text"
-                       placeholder="Search by name or email" th:value="${kw}">
+                       placeholder="Search by course name" th:value="${kw}">
                 <input type="submit" class="px-4 py-2 rounded-md border bg-blue-500 text-white" value="Search">
 
                 <input type="hidden" name="status" th:value="${status}">

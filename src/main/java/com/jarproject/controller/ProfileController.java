@@ -76,12 +76,12 @@ public class ProfileController{
             bindingResult.rejectValue("oldPassword", "error.oldPassword", "Old password is incorrect");
             return "main-page/profile";
         }
-        if(!Objects.equals(passwordDto.getNewPassword(), passwordDto.getConfirmPassword())){
-            bindingResult.rejectValue("confirmPassword", "error.confirmPassword", "Confirm password is incorrect");
-            return "main-page/profile";
-        }
         if(PasswordUtil.verifyPassword(passwordDto.getNewPassword(), sessionStudent.getPassword())){
             bindingResult.rejectValue("newPassword", "error.newPassword", "New password cannot be same as old password");
+            return "main-page/profile";
+        }
+        if(!Objects.equals(passwordDto.getNewPassword(), passwordDto.getConfirmPassword())){
+            bindingResult.rejectValue("confirmPassword", "error.confirmPassword", "Confirm password is incorrect");
             return "main-page/profile";
         }
         sessionStudent.setPassword(PasswordUtil.hashPassword(passwordDto.getNewPassword()));
@@ -129,7 +129,11 @@ public class ProfileController{
         }
 
         if (studentService.isEmailExistExceptId(studentDto.getEmail(), sessionStudent.getId())) {
-            bindingResult.rejectValue("email", "email.duplicate", "Email này đã được sử dụng bởi tài khoản khác");
+            bindingResult.rejectValue("email", "email.duplicate", "This email has already been used by another account.");
+            return "main-page/profile";
+        }
+        if (studentService.isPhoneExistExceptId(studentDto.getPhone(), sessionStudent.getId())) {
+            bindingResult.rejectValue("phone", "phone.duplicate", "This phone has already been used by another account.");
             return "main-page/profile";
         }
 
